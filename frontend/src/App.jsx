@@ -58,6 +58,7 @@ export default function App() {
         {/* Task Grid */}
         <TaskList
           tasks={tasks}
+          filter={filter}
           loading={loading}
           error={error}
           onEdit={openEdit}

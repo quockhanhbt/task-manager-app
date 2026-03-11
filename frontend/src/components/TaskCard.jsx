@@ -28,9 +28,6 @@ export default function TaskCard({ task, onEdit, onDelete }) {
     <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-semibold text-gray-800 text-sm leading-snug">{task.title}</h3>
-        <span className={`shrink-0 px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[task.status]}`}>
-          {STATUS_LABELS[task.status]}
-        </span>
       </div>
 
       {task.description && (
