@@ -10,8 +10,14 @@ export async function getAllTasks(req, res, next) {
     }
 
     const { rows } = status
-      ? await pool.query('SELECT * FROM tasks WHERE status = $1 ORDER BY created_at DESC', [status])
-      : await pool.query('SELECT * FROM tasks ORDER BY created_at DESC');
+      ? await pool.query(
+          'SELECT * FROM tasks WHERE user_id = $1 AND status = $2 ORDER BY created_at DESC',
+          [req.user.id, status]
+        )
+      : await pool.query(
+          'SELECT * FROM tasks WHERE user_id = $1 ORDER BY created_at DESC',
+          [req.user.id]
+        );
 
     res.json({ data: rows });
   } catch (err) {
@@ -21,7 +27,10 @@ export async function getAllTasks(req, res, next) {
 
 export async function getTaskById(req, res, next) {
   try {
-    const { rows } = await pool.query('SELECT * FROM tasks WHERE id = $1', [req.params.id]);
+    const { rows } = await pool.query(
+      'SELECT * FROM tasks WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.user.id]
+    );
     if (!rows.length) return res.status(404).json({ error: 'Task not found' });
     res.json({ data: rows[0] });
   } catch (err) {
@@ -38,10 +47,10 @@ export async function createTask(req, res, next) {
     }
 
     const { rows } = await pool.query(
-      `INSERT INTO tasks (title, description, status, due_date)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO tasks (title, description, status, due_date, user_id)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [title.trim(), description ?? null, status, due_date ?? null]
+      [title.trim(), description ?? null, status, due_date ?? null, req.user.id]
     );
     res.status(201).json({ data: rows[0] });
   } catch (err) {
@@ -57,7 +66,6 @@ export async function updateTask(req, res, next) {
       return res.status(400).json({ error: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}` });
     }
 
-    // Build dynamic SET clause from provided fields only
     const fields = [];
     const values = [];
     let idx = 1;
@@ -69,9 +77,9 @@ export async function updateTask(req, res, next) {
 
     if (!fields.length) return res.status(400).json({ error: 'No fields to update' });
 
-    values.push(req.params.id);
+    values.push(req.params.id, req.user.id);
     const { rows } = await pool.query(
-      `UPDATE tasks SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *`,
+      `UPDATE tasks SET ${fields.join(', ')} WHERE id = $${idx} AND user_id = $${idx + 1} RETURNING *`,
       values
     );
     if (!rows.length) return res.status(404).json({ error: 'Task not found' });
@@ -83,7 +91,10 @@ export async function updateTask(req, res, next) {
 
 export async function deleteTask(req, res, next) {
   try {
-    const { rows } = await pool.query('DELETE FROM tasks WHERE id = $1 RETURNING id', [req.params.id]);
+    const { rows } = await pool.query(
+      'DELETE FROM tasks WHERE id = $1 AND user_id = $2 RETURNING id',
+      [req.params.id, req.user.id]
+    );
     if (!rows.length) return res.status(404).json({ error: 'Task not found' });
     res.json({ data: { id: rows[0].id } });
   } catch (err) {
