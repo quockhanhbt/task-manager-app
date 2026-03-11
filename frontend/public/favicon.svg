@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Background rounded square -->
+  <rect width="32" height="32" rx="8" fill="#4F46E5"/>
+  <!-- Checklist lines -->
+  <rect x="13" y="9" width="11" height="2.5" rx="1.25" fill="white" opacity="0.9"/>
+  <rect x="13" y="14.75" width="11" height="2.5" rx="1.25" fill="white" opacity="0.9"/>
+  <rect x="13" y="20.5" width="7" height="2.5" rx="1.25" fill="white" opacity="0.9"/>
+  <!-- Checkmark 1 (checked) -->
+  <polyline points="8,11 9.8,13 12.5,9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Checkmark 2 (checked) -->
+  <polyline points="8,16.75 9.8,18.75 12.5,14.75" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Circle 3 (unchecked) -->
+  <circle cx="10" cy="21.75" r="2" stroke="white" stroke-width="1.8" opacity="0.6"/>
+</svg>
