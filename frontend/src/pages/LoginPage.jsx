@@ -12,6 +12,10 @@ function GoogleIcon() {
 }
 
 export default function LoginPage() {
+  const params  = new URLSearchParams(window.location.search);
+  const error   = params.get('error');
+  const details = params.get('details');
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-10 w-full max-w-sm text-center">
@@ -19,17 +23,33 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="13" y="9"    width="11" height="2.5" rx="1.25" fill="white" opacity="0.9"/>
+            <rect x="13" y="9"     width="11" height="2.5" rx="1.25" fill="white" opacity="0.9"/>
             <rect x="13" y="14.75" width="11" height="2.5" rx="1.25" fill="white" opacity="0.9"/>
-            <rect x="13" y="20.5" width="7"  height="2.5" rx="1.25" fill="white" opacity="0.9"/>
-            <polyline points="8,11 9.8,13 12.5,9"        stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <polyline points="8,16.75 9.8,18.75 12.5,14.75" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <rect x="13" y="20.5"  width="7"  height="2.5" rx="1.25" fill="white" opacity="0.9"/>
+            <polyline points="8,11 9.8,13 12.5,9"            stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <polyline points="8,16.75 9.8,18.75 12.5,14.75"  stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <circle cx="10" cy="21.75" r="2" stroke="white" strokeWidth="1.8" opacity="0.6"/>
           </svg>
         </div>
 
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Task Manager</h1>
         <p className="text-gray-500 text-sm mb-8">Sign in to manage your tasks</p>
+
+        {/* Error banner */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-left">
+            <p className="text-red-600 text-xs font-semibold">Login failed: {error}</p>
+            {details && <p className="text-red-400 text-xs mt-1 break-all">{details}</p>}
+          </div>
+        )}
+
+        {/* Debug: show VITE_API_URL */}
+        {!apiBase && (
+          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-left">
+            <p className="text-yellow-700 text-xs font-semibold">Config issue: VITE_API_URL is not set.</p>
+            <p className="text-yellow-600 text-xs mt-1">Add it to your frontend Vercel environment variables.</p>
+          </div>
+        )}
 
         <a
           href={`${apiBase}/auth/google`}

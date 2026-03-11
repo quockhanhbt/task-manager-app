@@ -11,17 +11,28 @@ router.get('/google',
 
 // Google callback → redirect to frontend with token in URL
 router.get('/google/callback',
-  passport.authenticate('google', {
-    session: false,
-    failureRedirect: `${process.env.FRONTEND_URL}?error=auth_failed`,
-  }),
-  (req, res) => {
-    const token = jwt.sign(
-      { id: req.user.id, email: req.user.email, name: req.user.name, avatar: req.user.avatar },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-    res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
+  (req, res, next) => {
+    passport.authenticate('google', { session: false }, (err, user) => {
+      if (err) {
+        console.error('OAuth error:', err);
+        const msg = encodeURIComponent(err.message ?? String(err));
+        return res.redirect(`${process.env.FRONTEND_URL}?error=oauth_error&details=${msg}`);
+      }
+      if (!user) {
+        return res.redirect(`${process.env.FRONTEND_URL}?error=no_user`);
+      }
+      try {
+        const token = jwt.sign(
+          { id: user.id, email: user.email, name: user.name, avatar: user.avatar },
+          process.env.JWT_SECRET,
+          { expiresIn: '7d' }
+        );
+        res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
+      } catch (signErr) {
+        console.error('JWT sign error:', signErr);
+        res.redirect(`${process.env.FRONTEND_URL}?error=token_error`);
+      }
+    })(req, res, next);
   }
 );
 
