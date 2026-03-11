@@ -6,7 +6,7 @@ const COLUMNS = [
   { status: 'done',        label: 'Done',         headerClass: 'bg-green-100 text-green-700' },
 ];
 
-export default function TaskList({ tasks, loading, error, onEdit, onDelete, filter }) {
+export default function TaskList({ tasks, loading, error, onEdit, onDelete, onStatusChange, filter }) {
   if (loading) return (
     <div className="flex justify-center py-16 text-gray-400 text-sm">Loading...</div>
   );
@@ -23,7 +23,7 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, filt
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} />
+          <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onStatusChange={onStatusChange} />
         ))}
       </div>
     );
@@ -48,7 +48,7 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, filt
             {col.length === 0
               ? <p className="text-center text-gray-300 text-xs py-6">No tasks</p>
               : col.map((task) => (
-                  <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} />
+                  <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onStatusChange={onStatusChange} />
                 ))
             }
           </div>

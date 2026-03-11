@@ -10,6 +10,8 @@ const STATUS_LABELS = {
   'done':        'Done',
 };
 
+const STATUSES = ['todo', 'in-progress', 'done'];
+
 function formatDate(dateStr) {
   if (!dateStr) return null;
   const d = new Date(dateStr.slice(0, 10) + 'T00:00:00');
@@ -21,14 +23,12 @@ function isOverdue(dateStr, status) {
   return new Date(dateStr.slice(0, 10) + 'T00:00:00') < new Date(new Date().toDateString());
 }
 
-export default function TaskCard({ task, onEdit, onDelete }) {
+export default function TaskCard({ task, onEdit, onDelete, onStatusChange }) {
   const overdue = isOverdue(task.due_date, task.status);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="font-semibold text-gray-800 text-sm leading-snug">{task.title}</h3>
-      </div>
+      <h3 className="font-semibold text-gray-800 text-sm leading-snug">{task.title}</h3>
 
       {task.description && (
         <p className="mt-1.5 text-gray-500 text-xs leading-relaxed line-clamp-2">{task.description}</p>
@@ -39,6 +39,19 @@ export default function TaskCard({ task, onEdit, onDelete }) {
           {overdue ? 'Overdue · ' : 'Due · '}{formatDate(task.due_date)}
         </p>
       )}
+
+      {/* Status selector */}
+      <div className="mt-3">
+        <select
+          value={task.status}
+          onChange={(e) => onStatusChange(task.id, e.target.value)}
+          className={`text-xs font-medium px-2 py-1 rounded-lg border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-300 ${STATUS_STYLES[task.status]}`}
+        >
+          {STATUSES.map((s) => (
+            <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+          ))}
+        </select>
+      </div>
 
       <div className="flex gap-2 mt-3">
         <button

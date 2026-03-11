@@ -27,6 +27,10 @@ export default function App() {
     await removeTask(id);
   };
 
+  const handleStatusChange = async (id, status) => {
+    await editTask(id, { status });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -63,6 +67,7 @@ export default function App() {
           error={error}
           onEdit={openEdit}
           onDelete={handleDelete}
+          onStatusChange={handleStatusChange}
         />
       </main>
 
