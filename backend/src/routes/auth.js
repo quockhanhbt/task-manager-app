@@ -4,23 +4,16 @@ import passport from '../auth/passport.js';
 
 const router = Router();
 
-const COOKIE_OPTS = {
-  httpOnly: true,
-  secure:   process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  maxAge:   7 * 24 * 60 * 60 * 1000, // 7 days
-};
-
 // Redirect to Google
 router.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email'], session: false })
 );
 
-// Google callback → set JWT cookie → redirect to frontend
+// Google callback → redirect to frontend with token in URL
 router.get('/google/callback',
   passport.authenticate('google', {
     session: false,
-    failureRedirect: `${process.env.FRONTEND_URL}/login`,
+    failureRedirect: `${process.env.FRONTEND_URL}?error=auth_failed`,
   }),
   (req, res) => {
     const token = jwt.sign(
@@ -28,14 +21,13 @@ router.get('/google/callback',
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
-    res.cookie('token', token, COOKIE_OPTS);
-    res.redirect(process.env.FRONTEND_URL);
+    res.redirect(`${process.env.FRONTEND_URL}?token=${token}`);
   }
 );
 
-// Return current user from cookie (no error if not logged in)
+// Return current user from Authorization header
 router.get('/me', (req, res) => {
-  const token = req.cookies?.token;
+  const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.json({ data: null });
   try {
     const { id, email, name, avatar } = jwt.verify(token, process.env.JWT_SECRET);
@@ -45,9 +37,8 @@ router.get('/me', (req, res) => {
   }
 });
 
-// Logout — clear cookie
-router.post('/logout', (req, res) => {
-  res.clearCookie('token', COOKIE_OPTS);
+// Logout — handled client-side (just remove token from localStorage)
+router.post('/logout', (_req, res) => {
   res.json({ data: { ok: true } });
 });
 
