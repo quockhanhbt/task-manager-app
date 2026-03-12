@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import TaskCard from './TaskCard.jsx';
 
 const COLUMNS = [
@@ -10,6 +10,91 @@ const COLUMNS = [
 export default function TaskList({ tasks, loading, error, onEdit, onDelete, onStatusChange, filter }) {
   const [dragOverStatus, setDragOverStatus] = useState(null);
   const dragTaskId = useRef(null);
+  const touchState = useRef(null);
+
+  // Refs so event listeners always see latest values without re-registering
+  const tasksRef = useRef(tasks);
+  useEffect(() => { tasksRef.current = tasks; }, [tasks]);
+  const onStatusChangeRef = useRef(onStatusChange);
+  useEffect(() => { onStatusChangeRef.current = onStatusChange; }, [onStatusChange]);
+
+  // Non-passive touchmove so we can call preventDefault to block scrolling during drag
+  useEffect(() => {
+    const onTouchMove = (e) => {
+      if (!touchState.current) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      const { ghost, offsetX, offsetY } = touchState.current;
+
+      ghost.style.left = `${touch.clientX - offsetX}px`;
+      ghost.style.top  = `${touch.clientY - offsetY}px`;
+
+      // Briefly hide ghost so elementFromPoint sees the element underneath
+      ghost.style.visibility = 'hidden';
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      ghost.style.visibility = 'visible';
+
+      const col = el?.closest('[data-status]');
+      setDragOverStatus(col?.dataset.status ?? null);
+    };
+
+    const onTouchEnd = (e) => {
+      if (!touchState.current) return;
+      const touch = e.changedTouches[0];
+      const { taskId, ghost } = touchState.current;
+
+      ghost.remove();
+
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      const col = el?.closest('[data-status]');
+
+      if (col) {
+        const newStatus = col.dataset.status;
+        const task = tasksRef.current.find((t) => t.id === taskId);
+        if (task && task.status !== newStatus) {
+          onStatusChangeRef.current(taskId, newStatus);
+        }
+      }
+
+      setDragOverStatus(null);
+      touchState.current = null;
+    };
+
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onTouchEnd);
+    return () => {
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+  }, []);
+
+  const handleTouchStart = (e, taskId) => {
+    const touch = e.touches[0];
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+
+    const ghost = card.cloneNode(true);
+    ghost.style.cssText = `
+      position: fixed;
+      left: ${rect.left}px;
+      top: ${rect.top}px;
+      width: ${rect.width}px;
+      opacity: 0.85;
+      pointer-events: none;
+      z-index: 9999;
+      transform: scale(1.04) rotate(1.5deg);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      border-radius: 12px;
+    `;
+    document.body.appendChild(ghost);
+
+    touchState.current = {
+      taskId,
+      ghost,
+      offsetX: touch.clientX - rect.left,
+      offsetY: touch.clientY - rect.top,
+    };
+  };
 
   if (loading) return (
     <div className="flex justify-center py-16 text-gray-400 text-sm">Loading...</div>
@@ -19,7 +104,7 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, onSt
     <div className="text-center py-16 text-red-500 text-sm">{error}</div>
   );
 
-  // Filtered: flat grid, no drag-and-drop needed
+  // Filtered view — flat grid, no drag needed
   if (filter) {
     if (!tasks.length) return (
       <div className="text-center py-16 text-gray-400 text-sm">No tasks found.</div>
@@ -33,6 +118,7 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, onSt
     );
   }
 
+  // --- Desktop drag handlers ---
   const handleDragStart = (taskId) => {
     dragTaskId.current = taskId;
   };
@@ -54,7 +140,6 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, onSt
   };
 
   const handleDragLeave = (e) => {
-    // Only clear when leaving the column entirely (not a child element)
     if (!e.currentTarget.contains(e.relatedTarget)) {
       setDragOverStatus(null);
     }
@@ -69,6 +154,7 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, onSt
         return (
           <div
             key={status}
+            data-status={status}
             onDragOver={(e) => handleDragOver(e, status)}
             onDrop={(e) => handleDrop(e, status)}
             onDragLeave={handleDragLeave}
@@ -76,7 +162,6 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, onSt
               isOver ? 'bg-indigo-50 ring-2 ring-indigo-300 ring-dashed' : ''
             }`}
           >
-            {/* Column header */}
             <div className={`flex items-center justify-between px-3 py-2 rounded-lg ${headerClass}`}>
               <span className="text-sm font-semibold">{label}</span>
               <span className="text-xs font-medium bg-white/60 px-2 py-0.5 rounded-full">
@@ -84,7 +169,6 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, onSt
               </span>
             </div>
 
-            {/* Cards */}
             {col.length === 0
               ? (
                 <div className={`text-center text-xs py-8 rounded-lg border-2 border-dashed transition-colors ${
@@ -101,6 +185,7 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, onSt
                   onDelete={onDelete}
                   onStatusChange={onStatusChange}
                   onDragStart={handleDragStart}
+                  onTouchStart={handleTouchStart}
                 />
               ))
             }
