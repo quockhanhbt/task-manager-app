@@ -16,24 +16,21 @@ const STATUS_LABELS = {
 };
 
 function formatValue(field, value) {
-  if (value === null || value === undefined || value === '') return <em className="text-gray-300">empty</em>;
+  if (value === null || value === undefined || value === '') return '—';
   if (field === 'status') return STATUS_LABELS[value] ?? value;
   if (field === 'due_date') {
     const d = new Date(value.slice(0, 10) + 'T00:00:00');
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
-  return value;
+  // Truncate long strings so they fit on one row
+  return value.length > 40 ? value.slice(0, 40) + '…' : value;
 }
 
-function timeAgo(isoStr) {
-  const diff = Date.now() - new Date(isoStr).getTime();
-  const mins  = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days  = Math.floor(diff / 86400000);
-  if (mins < 1)   return 'just now';
-  if (mins < 60)  return `${mins}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  return `${days}d ago`;
+function formatTime(isoStr) {
+  return new Date(isoStr).toLocaleString('en-US', {
+    month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
 }
 
 export default function TaskHistory({ taskId }) {
@@ -48,35 +45,48 @@ export default function TaskHistory({ taskId }) {
       .finally(() => setLoading(false));
   }, [taskId]);
 
-  if (loading) return <p className="text-sm text-gray-400 py-4 text-center">Loading...</p>;
-  if (error)   return <p className="text-sm text-red-500 py-4 text-center">{error}</p>;
+  if (loading) return <p className="text-sm text-gray-400 py-6 text-center">Loading...</p>;
+  if (error)   return <p className="text-sm text-red-500 py-6 text-center">{error}</p>;
   if (!history.length) return (
-    <p className="text-sm text-gray-400 py-4 text-center">No changes recorded yet.</p>
+    <p className="text-sm text-gray-400 py-6 text-center">No changes recorded yet.</p>
   );
 
   return (
-    <ol className="relative border-l border-gray-200 ml-2 space-y-5 max-h-96 overflow-y-auto pr-2">
-      {history.map((entry) => (
-        <li key={entry.id} className="ml-4">
-          <div className="absolute -left-1.5 mt-1 w-3 h-3 rounded-full bg-indigo-400 border-2 border-white" />
-          <p className="text-xs text-gray-400 mb-0.5" title={new Date(entry.changed_at).toLocaleString()}>
-            {timeAgo(entry.changed_at)}
-          </p>
-          <p className="text-sm text-gray-700">
-            <span className="font-medium">{FIELD_LABELS[entry.field] ?? entry.field}</span>
-            {' changed'}
-          </p>
-          <div className="mt-1 flex items-center gap-2 text-xs">
-            <span className="bg-red-50 text-red-600 px-2 py-0.5 rounded line-through">
-              {formatValue(entry.field, entry.old_value)}
-            </span>
-            <span className="text-gray-400">→</span>
-            <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded">
-              {formatValue(entry.field, entry.new_value)}
-            </span>
-          </div>
-        </li>
-      ))}
-    </ol>
+    <div className="overflow-y-auto max-h-[28rem]">
+      <table className="w-full text-xs border-collapse">
+        <thead>
+          <tr className="border-b border-gray-100 text-gray-400 uppercase tracking-wide">
+            <th className="text-left font-medium py-2 pr-4 whitespace-nowrap">Time</th>
+            <th className="text-left font-medium py-2 pr-4 whitespace-nowrap">Field</th>
+            <th className="text-left font-medium py-2 pr-4">Before</th>
+            <th className="text-left font-medium py-2 pr-2 w-4"></th>
+            <th className="text-left font-medium py-2">After</th>
+          </tr>
+        </thead>
+        <tbody>
+          {history.map((entry) => (
+            <tr key={entry.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+              <td className="py-2 pr-4 text-gray-400 whitespace-nowrap">
+                {formatTime(entry.changed_at)}
+              </td>
+              <td className="py-2 pr-4 font-medium text-gray-600 whitespace-nowrap">
+                {FIELD_LABELS[entry.field] ?? entry.field}
+              </td>
+              <td className="py-2 pr-2 max-w-[10rem] truncate">
+                <span className="bg-red-50 text-red-500 px-1.5 py-0.5 rounded line-through">
+                  {formatValue(entry.field, entry.old_value)}
+                </span>
+              </td>
+              <td className="py-2 pr-2 text-gray-300 select-none">→</td>
+              <td className="py-2 max-w-[10rem] truncate">
+                <span className="bg-green-50 text-green-700 px-1.5 py-0.5 rounded">
+                  {formatValue(entry.field, entry.new_value)}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

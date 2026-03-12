@@ -120,7 +120,7 @@ export default function App() {
       )}
 
       {modal?.mode === 'history' && (
-        <Modal title={`History · ${modal.task.title}`} onClose={closeModal}>
+        <Modal title={`History · ${modal.task.title}`} onClose={closeModal} wide>
           <TaskHistory taskId={modal.task.id} />
         </Modal>
       )}
