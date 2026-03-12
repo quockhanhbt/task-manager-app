@@ -44,6 +44,12 @@ export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onDra
         </p>
       )}
 
+      {task.assignee && (
+        <p className="mt-1 text-xs text-gray-400">
+          <span className="font-medium text-gray-500">Assignee:</span> {task.assignee}
+        </p>
+      )}
+
       {/* Status selector */}
       <div className="mt-3">
         <select

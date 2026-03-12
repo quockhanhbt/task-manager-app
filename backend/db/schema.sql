@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   status      VARCHAR(20)  NOT NULL DEFAULT 'todo'
                 CHECK (status IN ('todo', 'in-progress', 'done')),
   due_date    DATE,
+  assignee    VARCHAR(255),
   created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );

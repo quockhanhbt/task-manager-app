@@ -14,6 +14,7 @@ export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
     description: initial.description ?? '',
     status:      initial.status      ?? 'todo',
     due_date:    initial.due_date ? initial.due_date.slice(0, 10) : '',
+    assignee:    initial.assignee    ?? '',
   });
   const [error, setError]     = useState('');
   const [saving, setSaving]   = useState(false);
@@ -29,6 +30,7 @@ export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
       await onSubmit({
         ...form,
         due_date: form.due_date || null,
+        assignee: form.assignee || null,
       });
     } catch (err) {
       setError(err.response?.data?.error ?? 'Something went wrong');
@@ -86,6 +88,17 @@ export default function TaskForm({ initial = {}, onSubmit, onCancel }) {
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Assignee</label>
+        <input
+          type="text"
+          value={form.assignee}
+          onChange={set('assignee')}
+          placeholder="Assignee name or email"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
       </div>
 
       <div className="flex justify-end gap-3 pt-2">

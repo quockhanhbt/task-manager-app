@@ -40,17 +40,17 @@ export async function getTaskById(req, res, next) {
 
 export async function createTask(req, res, next) {
   try {
-    const { title, description, status = 'todo', due_date } = req.body;
+    const { title, description, status = 'todo', due_date, assignee } = req.body;
     if (!title?.trim()) return res.status(400).json({ error: 'Title is required' });
     if (status && !VALID_STATUSES.includes(status)) {
       return res.status(400).json({ error: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}` });
     }
 
     const { rows } = await pool.query(
-      `INSERT INTO tasks (title, description, status, due_date, user_id)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO tasks (title, description, status, due_date, assignee, user_id)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [title.trim(), description ?? null, status, due_date ?? null, req.user.id]
+      [title.trim(), description ?? null, status, due_date ?? null, assignee ?? null, req.user.id]
     );
     res.status(201).json({ data: rows[0] });
   } catch (err) {
@@ -60,7 +60,7 @@ export async function createTask(req, res, next) {
 
 export async function updateTask(req, res, next) {
   try {
-    const { title, description, status, due_date } = req.body;
+    const { title, description, status, due_date, assignee } = req.body;
 
     if (status && !VALID_STATUSES.includes(status)) {
       return res.status(400).json({ error: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}` });
@@ -74,6 +74,7 @@ export async function updateTask(req, res, next) {
     if (description !== undefined) { fields.push(`description = $${idx++}`); values.push(description); }
     if (status !== undefined)      { fields.push(`status = $${idx++}`);      values.push(status); }
     if (due_date !== undefined)    { fields.push(`due_date = $${idx++}`);    values.push(due_date); }
+    if (assignee !== undefined)    { fields.push(`assignee = $${idx++}`);    values.push(assignee); }
 
     if (!fields.length) return res.status(400).json({ error: 'No fields to update' });
 
