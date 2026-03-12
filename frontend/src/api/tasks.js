@@ -26,3 +26,6 @@ export const updateTask = (id, payload) =>
 
 export const deleteTask = (id) =>
   api.delete(`/tasks/${id}`).then((r) => r.data.data);
+
+export const fetchTaskHistory = (id) =>
+  api.get(`/tasks/${id}/history`).then((r) => r.data.data);

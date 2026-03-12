@@ -4,6 +4,7 @@ import { useTasks } from './hooks/useTasks.js';
 import TaskList from './components/TaskList.jsx';
 import TaskFilter from './components/TaskFilter.jsx';
 import TaskForm from './components/TaskForm.jsx';
+import TaskHistory from './components/TaskHistory.jsx';
 import Modal from './components/Modal.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 
@@ -24,9 +25,10 @@ export default function App() {
   // Not logged in
   if (!user) return <LoginPage />;
 
-  const openCreate = () => setModal({ mode: 'create' });
-  const openEdit   = (task) => setModal({ mode: 'edit', task });
-  const closeModal = () => setModal(null);
+  const openCreate  = () => setModal({ mode: 'create' });
+  const openEdit    = (task) => setModal({ mode: 'edit', task });
+  const openHistory = (task) => setModal({ mode: 'history', task });
+  const closeModal  = () => setModal(null);
 
   const handleSubmit = async (payload) => {
     if (modal.mode === 'create') {
@@ -100,10 +102,11 @@ export default function App() {
           onEdit={openEdit}
           onDelete={handleDelete}
           onStatusChange={handleStatusChange}
+          onHistory={openHistory}
         />
       </main>
 
-      {modal && (
+      {modal && modal.mode !== 'history' && (
         <Modal
           title={modal.mode === 'create' ? 'New Task' : 'Edit Task'}
           onClose={closeModal}
@@ -113,6 +116,12 @@ export default function App() {
             onSubmit={handleSubmit}
             onCancel={closeModal}
           />
+        </Modal>
+      )}
+
+      {modal?.mode === 'history' && (
+        <Modal title={`History · ${modal.task.title}`} onClose={closeModal}>
+          <TaskHistory taskId={modal.task.id} />
         </Modal>
       )}
     </div>

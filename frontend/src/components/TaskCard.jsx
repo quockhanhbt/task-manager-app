@@ -23,7 +23,7 @@ function isOverdue(dateStr, status) {
   return new Date(dateStr.slice(0, 10) + 'T00:00:00') < new Date(new Date().toDateString());
 }
 
-export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onDragStart }) {
+export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onDragStart, onHistory }) {
   const overdue = isOverdue(task.due_date, task.status);
 
   return (
@@ -69,6 +69,12 @@ export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onDra
           className="text-xs px-3 py-1 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition-colors"
         >
           Edit
+        </button>
+        <button
+          onClick={() => onHistory(task)}
+          className="text-xs px-3 py-1 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors"
+        >
+          History
         </button>
         <button
           onClick={() => onDelete(task.id)}

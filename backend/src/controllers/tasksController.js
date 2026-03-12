@@ -78,13 +78,58 @@ export async function updateTask(req, res, next) {
 
     if (!fields.length) return res.status(400).json({ error: 'No fields to update' });
 
+    // Fetch current values to diff against
+    const { rows: current } = await pool.query(
+      'SELECT * FROM tasks WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.user.id]
+    );
+    if (!current.length) return res.status(404).json({ error: 'Task not found' });
+    const before = current[0];
+
     values.push(req.params.id, req.user.id);
     const { rows } = await pool.query(
       `UPDATE tasks SET ${fields.join(', ')} WHERE id = $${idx} AND user_id = $${idx + 1} RETURNING *`,
       values
     );
     if (!rows.length) return res.status(404).json({ error: 'Task not found' });
-    res.json({ data: rows[0] });
+    const after = rows[0];
+
+    // Record a history entry for each changed field
+    const TRACKED = ['title', 'description', 'status', 'due_date', 'assignee'];
+    const historyRows = TRACKED
+      .filter((f) => req.body[f] !== undefined)
+      .filter((f) => String(before[f] ?? '') !== String(after[f] ?? ''))
+      .map((f) => [after.id, f, before[f] ?? null, after[f] ?? null]);
+
+    if (historyRows.length) {
+      const placeholders = historyRows.map((_, i) =>
+        `($${i * 4 + 1}, $${i * 4 + 2}, $${i * 4 + 3}, $${i * 4 + 4})`
+      ).join(', ');
+      await pool.query(
+        `INSERT INTO task_history (task_id, field, old_value, new_value) VALUES ${placeholders}`,
+        historyRows.flat()
+      );
+    }
+
+    res.json({ data: after });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getTaskHistory(req, res, next) {
+  try {
+    const { rows: task } = await pool.query(
+      'SELECT id FROM tasks WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.user.id]
+    );
+    if (!task.length) return res.status(404).json({ error: 'Task not found' });
+
+    const { rows } = await pool.query(
+      'SELECT * FROM task_history WHERE task_id = $1 ORDER BY changed_at DESC',
+      [req.params.id]
+    );
+    res.json({ data: rows });
   } catch (err) {
     next(err);
   }

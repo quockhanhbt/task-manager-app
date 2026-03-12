@@ -24,3 +24,13 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER tasks_updated_at
   BEFORE UPDATE ON tasks
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- Change history for tasks
+CREATE TABLE IF NOT EXISTS task_history (
+  id          SERIAL PRIMARY KEY,
+  task_id     INTEGER NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+  field       VARCHAR(50) NOT NULL,
+  old_value   TEXT,
+  new_value   TEXT,
+  changed_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

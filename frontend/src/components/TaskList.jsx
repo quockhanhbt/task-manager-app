@@ -7,7 +7,7 @@ const COLUMNS = [
   { status: 'done',        label: 'Done',        headerClass: 'bg-green-100 text-green-700' },
 ];
 
-export default function TaskList({ tasks, loading, error, onEdit, onDelete, onStatusChange, filter }) {
+export default function TaskList({ tasks, loading, error, onEdit, onDelete, onStatusChange, onHistory, filter }) {
   const [dragOverStatus, setDragOverStatus] = useState(null);
   const dragTaskId = useRef(null);
 
@@ -27,7 +27,7 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, onSt
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onStatusChange={onStatusChange} />
+          <TaskCard key={task.id} task={task} onEdit={onEdit} onDelete={onDelete} onStatusChange={onStatusChange} onHistory={onHistory} />
         ))}
       </div>
     );
@@ -100,6 +100,7 @@ export default function TaskList({ tasks, loading, error, onEdit, onDelete, onSt
                   onEdit={onEdit}
                   onDelete={onDelete}
                   onStatusChange={onStatusChange}
+                  onHistory={onHistory}
                   onDragStart={handleDragStart}
                 />
               ))
