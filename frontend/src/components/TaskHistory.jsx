@@ -22,8 +22,7 @@ function formatValue(field, value) {
     const d = new Date(value.slice(0, 10) + 'T00:00:00');
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
-  // Truncate long strings so they fit on one row
-  return value.length > 40 ? value.slice(0, 40) + '…' : value;
+  return value;
 }
 
 function formatTime(isoStr) {
@@ -72,13 +71,13 @@ export default function TaskHistory({ taskId }) {
               <td className="py-2 pr-4 font-medium text-gray-600 whitespace-nowrap">
                 {FIELD_LABELS[entry.field] ?? entry.field}
               </td>
-              <td className="py-2 pr-2 max-w-[10rem] truncate">
+              <td className="py-2 pr-2 max-w-[10rem] break-words">
                 <span className="bg-red-50 text-red-500 px-1.5 py-0.5 rounded line-through">
                   {formatValue(entry.field, entry.old_value)}
                 </span>
               </td>
               <td className="py-2 pr-2 text-gray-300 select-none">→</td>
-              <td className="py-2 max-w-[10rem] truncate">
+              <td className="py-2 max-w-[10rem] break-words">
                 <span className="bg-green-50 text-green-700 px-1.5 py-0.5 rounded">
                   {formatValue(entry.field, entry.new_value)}
                 </span>
