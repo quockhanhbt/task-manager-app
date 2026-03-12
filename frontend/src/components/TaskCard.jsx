@@ -23,13 +23,14 @@ function isOverdue(dateStr, status) {
   return new Date(dateStr.slice(0, 10) + 'T00:00:00') < new Date(new Date().toDateString());
 }
 
-export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onDragStart }) {
+export default function TaskCard({ task, onEdit, onDelete, onStatusChange, onDragStart, onTouchStart }) {
   const overdue = isOverdue(task.due_date, task.status);
 
   return (
     <div
       draggable
       onDragStart={() => onDragStart?.(task.id)}
+      onTouchStart={(e) => onTouchStart?.(e, task.id)}
       className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing active:opacity-50 active:scale-95"
     >
       <h3 className="font-semibold text-gray-800 text-sm leading-snug">{task.title}</h3>
