@@ -1,0 +1,43 @@
+<svg width="520" height="480" viewBox="0 0 520 480" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <filter id="card-shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#00000014"/>
+    </filter>
+  </defs>
+
+  <!-- Page background -->
+  <rect width="520" height="480" fill="#F9FAFB"/>
+
+  <!-- Card -->
+  <rect x="88" y="52" width="344" height="376" rx="16" fill="white" stroke="#E5E7EB" stroke-width="1" filter="url(#card-shadow)"/>
+
+  <!-- Logo square -->
+  <rect x="220" y="92" width="56" height="56" rx="14" fill="#4F46E5"/>
+  <!-- Checkmark 1 -->
+  <polyline points="227,120 230,124 236,117" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Line 1 -->
+  <rect x="240" y="118.5" width="22" height="3" rx="1.5" fill="white" opacity="0.9"/>
+  <!-- Checkmark 2 -->
+  <polyline points="227,130 230,134 236,127" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Line 2 -->
+  <rect x="240" y="128.5" width="22" height="3" rx="1.5" fill="white" opacity="0.9"/>
+  <!-- Circle 3 -->
+  <circle cx="230" cy="140" r="2.5" fill="none" stroke="white" stroke-width="1.8" opacity="0.6"/>
+  <!-- Line 3 -->
+  <rect x="240" y="137.5" width="14" height="3" rx="1.5" fill="white" opacity="0.9"/>
+
+  <!-- Title -->
+  <text x="260" y="190" text-anchor="middle" font-size="26" font-weight="700" fill="#111827" letter-spacing="-0.5">Task Manager</text>
+
+  <!-- Subtitle -->
+  <text x="260" y="214" text-anchor="middle" font-size="14" fill="#6B7280">Sign in to manage your tasks</text>
+
+  <!-- Google button -->
+  <rect x="108" y="256" width="304" height="44" rx="8" fill="white" stroke="#D1D5DB" stroke-width="1.5"/>
+  <!-- Google colored G (simplified) -->
+  <text x="134" y="284" font-size="18" font-weight="700" font-style="italic" fill="#4285F4">G</text>
+  <text x="174" y="283" font-size="14" font-weight="500" fill="#374151">Continue with Google</text>
+
+  <!-- Footer note -->
+  <text x="260" y="392" text-anchor="middle" font-size="11" fill="#D1D5DB">Your tasks. Your way.</text>
+</svg>

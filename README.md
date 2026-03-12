@@ -2,6 +2,17 @@
 
 A full-stack task management web app with Google OAuth authentication, built with React, Express, and PostgreSQL.
 
+## Screenshots
+
+### Login
+![Login page](docs/screenshots/01-login.svg)
+
+### Kanban Board
+![Dashboard — kanban board with sample tasks](docs/screenshots/02-dashboard.svg)
+
+### New Task Modal
+![New task form](docs/screenshots/03-new-task-modal.svg)
+
 ## Features
 
 - Google OAuth 2.0 login (no passwords)

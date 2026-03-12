@@ -1,0 +1,85 @@
+<svg width="1000" height="620" viewBox="0 0 1000 620" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <filter id="modal-shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="24" flood-color="#00000020"/>
+    </filter>
+  </defs>
+
+  <!-- ── Dimmed background (dashboard) ── -->
+  <rect width="1000" height="620" fill="#F9FAFB" opacity="0.4"/>
+
+  <!-- Header ghosted -->
+  <rect width="1000" height="56" fill="white" opacity="0.4" stroke="#E5E7EB" stroke-width="1"/>
+  <text x="40" y="35" font-size="18" font-weight="700" fill="#111827" opacity="0.25" letter-spacing="-0.3">Task Manager</text>
+  <rect x="758" y="14" width="118" height="34" rx="8" fill="#4F46E5" opacity="0.25"/>
+
+  <!-- Background columns (ghosted) -->
+  <rect x="40" y="148" width="293" height="36" rx="8" fill="#F3F4F6" opacity="0.4"/>
+  <rect x="353" y="148" width="293" height="36" rx="8" fill="#FEF9C3" opacity="0.4"/>
+  <rect x="666" y="148" width="293" height="36" rx="8" fill="#DCFCE7" opacity="0.4"/>
+  <!-- Ghost cards -->
+  <rect x="40" y="196" width="293" height="126" rx="12" fill="white" opacity="0.3" stroke="#E5E7EB" stroke-width="1"/>
+  <rect x="40" y="334" width="293" height="106" rx="12" fill="white" opacity="0.3" stroke="#E5E7EB" stroke-width="1"/>
+  <rect x="353" y="196" width="293" height="126" rx="12" fill="white" opacity="0.3" stroke="#E5E7EB" stroke-width="1"/>
+  <rect x="666" y="196" width="293" height="106" rx="12" fill="white" opacity="0.3" stroke="#E5E7EB" stroke-width="1"/>
+  <rect x="666" y="314" width="293" height="106" rx="12" fill="white" opacity="0.3" stroke="#E5E7EB" stroke-width="1"/>
+
+  <!-- ── Dark overlay ── -->
+  <rect width="1000" height="620" fill="#111827" opacity="0.45"/>
+
+  <!-- ── Modal card ── -->
+  <rect x="260" y="80" width="480" height="464" rx="16" fill="white" filter="url(#modal-shadow)"/>
+
+  <!-- Modal header -->
+  <text x="292" y="120" font-size="17" font-weight="700" fill="#111827">New Task</text>
+  <!-- X close button -->
+  <circle cx="708" cy="112" r="14" fill="#F3F4F6"/>
+  <line x1="702" y1="106" x2="714" y2="118" stroke="#6B7280" stroke-width="2" stroke-linecap="round"/>
+  <line x1="714" y1="106" x2="702" y2="118" stroke="#6B7280" stroke-width="2" stroke-linecap="round"/>
+  <!-- Divider under header -->
+  <line x1="260" y1="136" x2="740" y2="136" stroke="#E5E7EB" stroke-width="1"/>
+
+  <!-- ── Form fields ── -->
+
+  <!-- Title field -->
+  <text x="292" y="166" font-size="13" font-weight="500" fill="#374151">Title <tspan fill="#EF4444">*</tspan></text>
+  <rect x="292" y="174" width="416" height="38" rx="8" fill="white" stroke="#6366F1" stroke-width="2"/>
+  <text x="306" y="197" font-size="13" fill="#111827">Deploy backend to Vercel</text>
+
+  <!-- Description field -->
+  <text x="292" y="234" font-size="13" font-weight="500" fill="#374151">Description</text>
+  <rect x="292" y="242" width="416" height="76" rx="8" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="306" y="262" font-size="12" fill="#374151">Configure environment variables, connect</text>
+  <text x="306" y="278" font-size="12" fill="#374151">PostgreSQL, and set up the production</text>
+  <text x="306" y="294" font-size="12" fill="#374151">build pipeline on Vercel.</text>
+
+  <!-- Status + Due Date row -->
+  <text x="292" y="344" font-size="13" font-weight="500" fill="#374151">Status</text>
+  <text x="508" y="344" font-size="13" font-weight="500" fill="#374151">Due Date</text>
+
+  <!-- Status select -->
+  <rect x="292" y="352" width="196" height="38" rx="8" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="308" y="375" font-size="13" fill="#374151">In Progress</text>
+  <!-- dropdown arrow -->
+  <polyline points="470,367 476,373 482,367" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Due date input -->
+  <rect x="508" y="352" width="200" height="38" rx="8" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="524" y="375" font-size="13" fill="#374151">2026-03-20</text>
+  <!-- calendar icon -->
+  <rect x="681" y="362" width="16" height="15" rx="2" fill="none" stroke="#9CA3AF" stroke-width="1.3"/>
+  <line x1="684" y1="360" x2="684" y2="364" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="694" y1="360" x2="694" y2="364" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="681" y1="368" x2="697" y2="368" stroke="#9CA3AF" stroke-width="1"/>
+
+  <!-- ── Buttons ── -->
+  <line x1="260" y1="440" x2="740" y2="440" stroke="#E5E7EB" stroke-width="1"/>
+
+  <!-- Cancel button -->
+  <rect x="584" y="456" width="78" height="36" rx="8" fill="white" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="623" y="478" text-anchor="middle" font-size="13" fill="#4B5563">Cancel</text>
+
+  <!-- Save button -->
+  <rect x="672" y="456" width="68" height="36" rx="8" fill="#4F46E5"/>
+  <text x="706" y="478" text-anchor="middle" font-size="13" font-weight="500" fill="white">Save</text>
+</svg>
